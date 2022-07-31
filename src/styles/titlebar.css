@@ -1,0 +1,36 @@
+.titlebar {
+	width: 100vw;
+	height: 18px;
+
+	position: absolute;
+	background-color: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(1px);
+
+	border: 0;
+	border-radius: 10px 10px 0px 0px;
+	box-sizing: border-box;
+
+	display: flex;
+	flex-direction: column;
+	padding-inline: 15px;
+
+	align-items: flex-end;
+	justify-content: center;
+
+	-webkit-app-region: drag;
+}
+
+.titlebar__btn__close {
+	background-color: red;
+	width: 10px;
+	height: 10px;
+	border: 0;
+	border-radius: 100%;
+
+	cursor: pointer;
+	-webkit-app-region: no-drag;
+}
+
+.titlebar__btn__close:hover {
+	cursor: pointer;
+}
