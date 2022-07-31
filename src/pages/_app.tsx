@@ -1,3 +1,4 @@
+import Titlebar from '../components/titlebar';
 import { Router } from '../private/router';
 import '../styles/global.css';
 
@@ -7,5 +8,10 @@ type AppProps = {
 };
 
 export default function App({ Component, pageProps }: AppProps) {
-	return <Component {...pageProps} />;
+	return (
+		<>
+			<Titlebar />
+			<Component {...pageProps} />
+		</>
+	);
 }

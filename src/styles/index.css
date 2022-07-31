@@ -1,4 +1,6 @@
 .parent-window {
+	box-sizing: border-box;
+
 	background-color: #0f172a;
 	display: flex;
 	justify-content: center;
@@ -6,6 +8,8 @@
 }
 
 .container {
+	box-sizing: border-box;
+
 	height: 40%;
 	display: flex;
 	flex-direction: column;
