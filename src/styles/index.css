@@ -28,6 +28,7 @@
 }
 
 .container__button {
+	border: 0;
 	cursor: pointer;
 	border-style: solid;
 	text-transform: uppercase;
@@ -36,7 +37,6 @@
 	background-color: #0284c7;
 	color: #e4e4e7;
 	border-radius: 0.75rem;
-	border-color: 0;
 	margin-inline: 10px;
 	margin-block: 25px;
 	box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);

@@ -11,24 +11,36 @@
 	box-sizing: border-box;
 
 	display: flex;
-	flex-direction: column;
-	padding-inline: 15px;
+	padding-inline: 8px;
 
-	align-items: flex-end;
-	justify-content: center;
+	align-items: center;
+	justify-content: end;
 
 	-webkit-app-region: drag;
 }
 
-.titlebar__btn__close {
-	background-color: red;
+.titlebar__button {
 	width: 10px;
 	height: 10px;
 	border: 0;
 	border-radius: 100%;
 
+	margin-inline: 3px;
+
 	cursor: pointer;
 	-webkit-app-region: no-drag;
+}
+
+.btn__close {
+	background-color: red;
+}
+
+.btn__minimise {
+	background-color: #facc15;
+}
+
+.btn__maximise {
+	background-color: #16a34a;
 }
 
 .titlebar__btn__close:hover {

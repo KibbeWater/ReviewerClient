@@ -1,2 +1,10 @@
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+import { contextBridge, ipcRenderer } from 'electron';
+
+console.log('preload.js');
+
+contextBridge.exposeInMainWorld('electronAPI', {
+	quitProgram: () => {
+		console.log('quitProgram');
+		ipcRenderer.send('quit');
+	},
+});
