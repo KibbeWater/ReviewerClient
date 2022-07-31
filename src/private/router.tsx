@@ -2,22 +2,43 @@ import { createRoot } from 'react-dom/client';
 
 import App from '../pages/_app';
 
-let currentPage: () => JSX.Element;
+let staticInstance: Router | null = null;
 
-export function Navigate(page: string) {
-	return new Promise<void>((resolve) => {
-		import(`../pages/${page}`).then((module) => {
-			console.log('Sucessfully loaded page: ' + page);
-			console.log(module);
-			currentPage = module.default;
-			resolve();
+type RouterOptions = {
+	index?: string | undefined;
+};
+
+export class Router {
+	root = createRoot(document.getElementById('_app'));
+	currentPage: () => JSX.Element;
+
+	constructor(options: RouterOptions = {}) {
+		this.Navigate(options.index || 'index').then(() => {
+			this.render();
 		});
-	});
+	}
+
+	render() {
+		this.root.render(<App Component={this.currentPage} pageProps={{ router: this }} />);
+	}
+
+	Navigate(page: string) {
+		return new Promise<void>((resolve) => {
+			import(`../pages/${page}`).then((module) => {
+				this.currentPage = module.default;
+				this.render();
+				resolve();
+			});
+		});
+	}
 }
 
-export default function Router() {
-	Navigate('index').then(() => {
-		const root = createRoot(document.getElementById('_app'));
-		root.render(<App Component={currentPage} pageProps={{}} />);
-	});
+export function useRouter(): Router {
+	// This is literally impossible to call unless you actually do it in the pages files later
+	return staticInstance as Router;
 }
+
+export default (options: RouterOptions = {}): Router => {
+	if (!staticInstance) return (staticInstance = new Router(options));
+	else return staticInstance;
+};

@@ -1,8 +1,9 @@
+import { Router } from '../private/router';
 import '../styles/global.css';
 
 type AppProps = {
 	Component: () => JSX.Element;
-	pageProps: any;
+	pageProps: any & { router: Router };
 };
 
 export default function App({ Component, pageProps }: AppProps) {

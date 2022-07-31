@@ -26,7 +26,6 @@
  * ```
  */
 
-import router from './private/router';
+import Router from './private/router';
 
-router();
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
+Router();
