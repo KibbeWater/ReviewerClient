@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client';
+import ElectronAPI from '../lib/electron';
 
 import App from '../pages/_app';
 
@@ -13,9 +14,19 @@ export class Router {
 	currentPage: () => JSX.Element;
 
 	constructor(options: RouterOptions = {}) {
-		this.Navigate(options.index || 'index').then(() => {
-			this.render();
-		});
+		if (!options.index)
+			ElectronAPI()
+				.getLastNavigation()
+				.then((url) => {
+					console.log('Navigating to ' + url);
+					this.Navigate(url).then(() => {
+						this.render();
+					});
+				});
+		else
+			this.Navigate(options.index).then(() => {
+				this.render();
+			});
 	}
 
 	render() {
@@ -27,6 +38,7 @@ export class Router {
 			import(`../pages/${page}`).then((module) => {
 				this.currentPage = module.default;
 				this.render();
+				ElectronAPI().navigate(page);
 				resolve();
 			});
 		});

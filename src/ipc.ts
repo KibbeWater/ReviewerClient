@@ -40,6 +40,8 @@ function FetchUser(renew?: string): Promise<UserResponse> {
 	});
 }
 
+let navURL = 'index';
+
 export default function Setup() {
 	ipcMain.on('authenticate', (event, username, password) => {
 		Login(username, password).then((response: UserResponse) =>
@@ -52,4 +54,8 @@ export default function Setup() {
 			event.reply('auth_token_response', response, response.error)
 		);
 	});
+
+	ipcMain.on('navigate', (event, url) => (navURL = url));
+
+	ipcMain.on('get_last_navigation', (event) => event.reply('get_last_navigation', navURL));
 }

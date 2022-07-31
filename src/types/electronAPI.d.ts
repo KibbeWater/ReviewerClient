@@ -5,4 +5,7 @@ export type electronAPI = {
 
 	login: (username: string, password: string) => Promise<UserResponse>;
 	fetchUser: (token: string | undefined) => Promise<UserResponse>;
+
+	navigate: (url: string) => void;
+	getLastNavigation: () => Promise<string>;
 };
