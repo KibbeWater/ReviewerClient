@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Authenticate } from '../lib/authentication';
+import { useRouter } from '../private/router';
+import { Authenticate, GetUser } from '../lib/authentication';
 
 import '../styles/login.css';
 
@@ -12,30 +13,39 @@ export default function Page() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 
+	const router = useRouter();
+
 	const loginBtn = () => {
 		setLoading(true);
 		Authenticate(username, password)
-			.then((response) => {
+			.then(() => router.Navigate('dashboard'))
+			.catch((e) => {
+				setError(e);
 				setLoading(false);
-			})
-			.catch(() => setLoading(false));
+				console.error(e);
+			});
 	};
 
 	useEffect(() => {
 		if (error || loading) setBtnDisabled(true);
 		else if (!username || !password) setBtnDisabled(true);
 		else setBtnDisabled(false);
-	});
+	}, [error, username, password, loading]);
 
 	useEffect(() => {
-		if (error)
-			return () =>
-				clearTimeout(
-					setTimeout(() => {
-						setError('');
-					}, 3000)
-				);
+		if (error) {
+			const timeout = setTimeout(() => {
+				setError('');
+			}, 3000);
+			return () => clearTimeout(timeout);
+		}
 	}, [error]);
+
+	useEffect(() => {
+		GetUser()
+			.then(() => router.Navigate('dashboard'))
+			.catch((e) => console.error('User was not previously logged in', e));
+	}, []);
 
 	return (
 		<div className='parent parent__flex'>
