@@ -18,7 +18,12 @@ function Login(username: string, password: string): Promise<UserResponse> {
 				password: password,
 			}),
 		})
-			.then((response) => response.json().then((data) => resolve(data as UserResponse)))
+			.then((response) =>
+				response
+					.json()
+					.then((data) => resolve(data as UserResponse))
+					.catch(() => console.error(response))
+			)
 			.catch((error) => reject(error));
 	});
 }
@@ -36,7 +41,12 @@ function FetchUser(renew?: string): Promise<UserResponse> {
 			},
 			body: JSON.stringify(body),
 		})
-			.then((response) => response.json().then((data) => resolve(data as UserResponse)))
+			.then((response) =>
+				response
+					.json()
+					.then((data) => resolve(data as UserResponse))
+					.catch(reject)
+			)
 			.catch((error) => reject(error));
 	});
 }
@@ -60,7 +70,9 @@ export default function Setup() {
 
 	ipcMain.on('get_last_navigation', (event) => event.reply('get_last_navigation', navURL));
 
-	ipcMain.on('get_maps', (event) => event.reply('get_maps', getAllSpots));
+	ipcMain.on('get_maps', (event) => event.reply('get_maps', getAllSpots()));
 
-	ipcMain.on('get_map', (event, map) => event.reply('get_map', getSpots(map as string)));
+	ipcMain.on('get_map', (event, map) =>
+		getSpots(map as string).then((spot) => event.reply('get_map_' + map, spot))
+	);
 }

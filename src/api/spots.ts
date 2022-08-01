@@ -38,9 +38,12 @@ export function parseSpots(spots: string): Spot[] {
 }
 
 export function getAllSpots(): string[] {
-	return fs.readdirSync(SPOTS_REVIEWER_PATH).map((spotFile) => {
-		if (spotFile.endsWith('_review.txt')) return spotFile.replace('_review.txt', '');
-	});
+	const files = fs.readdirSync(SPOTS_REVIEWER_PATH);
+	const spotFiles = files.reduce((prev, cur) => {
+		if (cur.endsWith('_review.txt')) prev.push(cur.replace('_review.txt', ''));
+		return prev;
+	}, [] as string[]);
+	return spotFiles;
 }
 
 export function getSpots(map: string): Promise<Spot[]> {

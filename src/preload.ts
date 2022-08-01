@@ -39,18 +39,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	getMaps: () => {
 		return new Promise((resolve, reject) => {
 			ipcRenderer.send('get_maps');
-			ipcRenderer.once('get_maps', (event, maps: string[]) => {
-				resolve(maps);
-			});
+			ipcRenderer.once('get_maps', (event, maps: string[]) => 
+				resolve(maps)
+			);
 		});
 	},
 
 	getMap: (map: string) => {
 		return new Promise((resolve, reject) => {
 			ipcRenderer.send('get_map', map);
-			ipcRenderer.once('get_map', (event, spots: Spot[]) => {
-				resolve(spots);
-			});
+			ipcRenderer.once('get_map_' + map, (event, spots: Spot[]) => 
+				resolve(spots)
+			);
 		});
 	},
 
