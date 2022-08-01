@@ -8,4 +8,7 @@ export type electronAPI = {
 
 	navigate: (url: string) => void;
 	getLastNavigation: () => Promise<string>;
+
+	getMaps: () => Promise<string[]>;
+	getMap: (map: string) => Promise<Spot[]>;
 };

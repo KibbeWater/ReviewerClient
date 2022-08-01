@@ -1,4 +1,5 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, IpcRenderer, ipcRenderer } from 'electron';
+import type { Spot } from './types/spots';
 
 contextBridge.exposeInMainWorld('electronAPI', {
 	quitProgram: () => ipcRenderer.send('quit'),
@@ -34,4 +35,25 @@ contextBridge.exposeInMainWorld('electronAPI', {
 			});
 		});
 	},
+
+	getMaps: () => {
+		return new Promise((resolve, reject) => {
+			ipcRenderer.send('get_maps');
+			ipcRenderer.once('get_maps', (event, maps: string[]) => {
+				resolve(maps);
+			});
+		});
+	},
+
+	getMap: (map: string) => {
+		return new Promise((resolve, reject) => {
+			ipcRenderer.send('get_map', map);
+			ipcRenderer.once('get_map', (event, spots: Spot[]) => {
+				resolve(spots);
+			});
+		});
+	},
+
+	onURLOpened: (callback: (url: string) => void) =>
+		ipcRenderer.on('url_opened', (event, url) => callback(url)),
 });

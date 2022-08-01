@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { useRouter } from '../private/router';
 import { GetUser } from '../lib/authentication';
-import '../styles/dashboard.css';
+import { useRouter } from '../private/router';
 import type { User } from '../types/user';
+import '../styles/dashboard.css';
 
 export default function Page() {
 	const [user, setUser] = useState({} as User);
+	const [spots, setSpots] = useState([]);
 
 	const router = useRouter();
 

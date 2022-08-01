@@ -2,6 +2,7 @@ import fetch from 'node-fetch';
 import { ipcMain } from 'electron';
 
 import type { UserResponse } from './types/user';
+import { getAllSpots, getSpots } from './api/spots';
 
 const API_URL = 'https://grenade.kibbewater.com/api';
 
@@ -58,4 +59,8 @@ export default function Setup() {
 	ipcMain.on('navigate', (event, url) => (navURL = url));
 
 	ipcMain.on('get_last_navigation', (event) => event.reply('get_last_navigation', navURL));
+
+	ipcMain.on('get_maps', (event) => event.reply('get_maps', getAllSpots));
+
+	ipcMain.on('get_map', (event, map) => event.reply('get_map', getSpots(map as string)));
 }

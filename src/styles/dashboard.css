@@ -1,3 +1,13 @@
 .dashboard__parent {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	padding-top: 30px;
+
 	background-color: #0f172a;
+}
+
+.dashboard__parent h1 {
+	color: white;
 }
