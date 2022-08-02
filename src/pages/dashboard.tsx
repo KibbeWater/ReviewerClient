@@ -4,8 +4,8 @@ import { GetUser } from '../lib/authentication';
 import { useRouter } from '../private/router';
 import type { Spot } from '../types/spots';
 import type { User } from '../types/user';
-import '../styles/dashboard.css';
 import ElectronAPI from '../lib/electron';
+import '../styles/dashboard.css';
 
 export default function Page() {
 	const [user, setUser] = useState({} as User);
@@ -18,17 +18,10 @@ export default function Page() {
 			.then(setUser)
 			.catch(() => router.Navigate('login'));
 
-		const benchStart = Date.now();
 		ElectronAPI()
 			.getMaps()
 			.then((e) => {
-				Promise.all(e.map((map) => ElectronAPI().getMap(map)))
-					.then((maps) => {
-						console.log(`Fetched maps in ${Date.now() - benchStart}ms`, maps);
-					})
-					.catch((e) => {
-						console.error(e);
-					});
+				Promise.all(e.map((map) => ElectronAPI().getMap(map)));
 			});
 	}, []);
 
@@ -36,7 +29,31 @@ export default function Page() {
 
 	return (
 		<div className='parent dashboard__parent'>
-			<h1>Welcome back, {user.username}</h1>
+			<h1 className='dashboard__header'>Welcome back, {user.username}</h1>
+			<div className='container'>
+				<div className='container__button_drawer'>
+					<button className='container__button btn__normal'>Remove All</button>
+					<button className='container__button btn__error'>Remove All</button>
+				</div>
+
+				<div className='container__cards'>
+					<div className='cards__sandbox'>
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+						<div className='card' />
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }
