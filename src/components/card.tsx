@@ -5,5 +5,11 @@ function Loading() {
 }
 
 export default function Card() {
-	return <div className='card' />;
+	return (
+		<div className='card'>
+			<div />
+			<div />
+			<div className='card__buttons' />
+		</div>
+	);
 }

@@ -8,4 +8,14 @@
 	margin-bottom: 15px;
 
 	position: relative;
+
+	border-radius: 0.5rem;
+
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.card__buttons {
+	display: flex;
+	flex-direction: column;
 }
