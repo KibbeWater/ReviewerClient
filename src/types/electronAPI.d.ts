@@ -11,4 +11,7 @@ export type electronAPI = {
 
 	getMaps: () => Promise<string[]>;
 	getMap: (map: string) => Promise<Spot[]>;
+	addSpot: (map: string, spot: Spot) => Promise<Spot[]>;
+	removeSpot: (map: string, spot: Spot) => Promise<Spot[]>;
+	removeAllSpots: (map: string) => void;
 };

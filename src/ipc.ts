@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import { ipcMain } from 'electron';
 
 import type { UserResponse } from './types/user';
-import { getAllSpots, getSpots } from './api/spots';
+import removeAllSpots, { addSpot, getAllSpots, getSpots, removeSpot } from './api/spots';
 
 const API_URL = 'https://grenade.kibbewater.com/api';
 
@@ -74,5 +74,17 @@ export default function Setup() {
 
 	ipcMain.on('get_map', (event, map) =>
 		getSpots(map as string).then((spot) => event.reply('get_map_' + map, spot))
+	);
+
+	ipcMain.on('add_spot', (event, spot, map) =>
+		addSpot(spot, map).then((spots) => event.reply('add_spot_' + map, spots))
+	);
+
+	ipcMain.on('remove_spot', (event, spot, map) =>
+		removeSpot(spot, map).then((spots) => event.reply('remove_spot_' + map, spots))
+	);
+
+	ipcMain.on('remove_all_spots', (event, map) =>
+		event.reply('remove_all_spots', removeAllSpots(map))
 	);
 }

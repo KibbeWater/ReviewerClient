@@ -22,23 +22,13 @@ export default function Page() {
 		ElectronAPI()
 			.getMaps()
 			.then((e) => {
-				Promise.all(e.map((map) => ElectronAPI().getMap(map)));
+				Promise.all(e.map((map) => ElectronAPI().getMap(map))).then((maps) => {
+					setSpots([].concat(...maps));
+				});
 			});
 	}, []);
 
 	if (!user.id) return <div className='parent dashboard__parent' />;
-
-	const spot = {
-		name: 'Cat 2 Chair',
-		throwType: 'Test',
-		grenadeType: 'molotov',
-		map: 'de_mirage',
-		x: 0,
-		y: 0,
-		z: 0,
-		pitch: 0,
-		yaw: 0,
-	} as Spot;
 
 	return (
 		<div className='parent dashboard__parent'>
@@ -51,16 +41,9 @@ export default function Page() {
 
 				<div className='container__cards'>
 					<div className='cards__sandbox'>
-						<Card spot={spot} />
-						<Card spot={spot} />
-						<Card spot={spot} />
-						<Card spot={spot} />
-						<Card spot={spot} />
-						<Card spot={spot} />
-						<Card spot={spot} />
-						<Card spot={spot} />
-						<Card spot={spot} />
-						<Card spot={spot} />
+						{spots.map((spot, idx) => {
+							return <Card key={idx} spot={spot} />;
+						})}
 					</div>
 				</div>
 			</div>

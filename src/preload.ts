@@ -39,20 +39,32 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	getMaps: () => {
 		return new Promise((resolve, reject) => {
 			ipcRenderer.send('get_maps');
-			ipcRenderer.once('get_maps', (event, maps: string[]) => 
-				resolve(maps)
-			);
+			ipcRenderer.once('get_maps', (event, maps: string[]) => resolve(maps));
 		});
 	},
 
 	getMap: (map: string) => {
 		return new Promise((resolve, reject) => {
 			ipcRenderer.send('get_map', map);
-			ipcRenderer.once('get_map_' + map, (event, spots: Spot[]) => 
-				resolve(spots)
-			);
+			ipcRenderer.once('get_map_' + map, (event, spots: Spot[]) => resolve(spots));
 		});
 	},
+
+	addSpot: (map: string, spot: Spot) => {
+		return new Promise((resolve, reject) => {
+			ipcRenderer.send('add_spot', map, spot);
+			ipcRenderer.once('add_spot_' + map, (event, spots: Spot[]) => resolve(spots));
+		});
+	},
+
+	removeSpot: (map: string, spot: Spot) => {
+		return new Promise((resolve, reject) => {
+			ipcRenderer.send('remove_spot', map, spot);
+			ipcRenderer.once('remove_spot_' + map, (event, spots: Spot[]) => resolve(spots));
+		});
+	},
+
+	removeAllSpots: (map: string) => ipcRenderer.send('remove_all_spots', map),
 
 	onURLOpened: (callback: (url: string) => void) =>
 		ipcRenderer.on('url_opened', (event, url) => callback(url)),

@@ -94,3 +94,7 @@ export function removeSpot(map: string, spot: Spot): Promise<Spot[]> {
 			.catch(reject);
 	});
 }
+
+export default function removeAllSpots(map: string) {
+	fs.rmSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'));
+}

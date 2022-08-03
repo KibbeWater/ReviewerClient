@@ -1,4 +1,4 @@
-import Titlebar from '../components/titlebar';
+import { useModalRouter } from '../private/modal';
 import { Router } from '../private/router';
 import '../styles/modal.css';
 
@@ -8,8 +8,9 @@ type AppProps = {
 };
 
 export default function App({ Component, pageProps }: AppProps) {
+	const router = useModalRouter();
 	return (
-		<div>
+		<div className={router.HasModalActive() ? 'modal_parent' : ''}>
 			<Component {...pageProps} />
 		</div>
 	);

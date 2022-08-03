@@ -1,27 +1,20 @@
-import { Router, RouterOptions } from './router';
-import ElectronAPI from '../lib/electron';
+import { createRoot } from 'react-dom/client';
 import App from '../modals/_app';
-import { createRoot, Root } from 'react-dom/client';
 
 let staticInstance: ModalRouter | null = null;
 
 export class ModalRouter {
-	root: null | Root = null;
-	currentPage: () => JSX.Element;
+	root = createRoot(document.getElementById('_modal'));
+	currentPage: () => JSX.Element | null;
 
-	constructor(options: RouterOptions = {}) {
-		options.dom = '_modal';
-
-		if (options.dom) this.root = createRoot(document.getElementById(options.dom));
-		else this.root = createRoot(document.getElementById('_app'));
-	}
+	//constructor(options: RouterOptions = {}) {}
 
 	Show(modal: string): Promise<void> {
 		return new Promise<void>((resolve) => {
 			import(`../modals/${modal}`).then((module) => {
+				console.log('module', module);
 				this.currentPage = module.default;
 				this.render();
-				ElectronAPI().navigate(modal);
 				resolve();
 			});
 		});
@@ -32,8 +25,12 @@ export class ModalRouter {
 	}
 
 	DisableActiveModal() {
-		this.currentPage = () => null;
+		this.currentPage = null;
 		this.render();
+	}
+
+	HasModalActive() {
+		return this.currentPage !== null;
 	}
 }
 
@@ -41,7 +38,7 @@ export function useModalRouter(): ModalRouter {
 	return staticInstance as ModalRouter;
 }
 
-export default function (options: RouterOptions = {}): ModalRouter {
-	if (!staticInstance) return (staticInstance = new ModalRouter(options));
+export default function (): ModalRouter {
+	if (!staticInstance) return (staticInstance = new ModalRouter());
 	else return staticInstance;
 }
