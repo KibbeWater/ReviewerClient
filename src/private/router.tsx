@@ -1,19 +1,23 @@
-import { createRoot } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
 import ElectronAPI from '../lib/electron';
 
 import App from '../pages/_app';
 
 let staticInstance: Router | null = null;
 
-type RouterOptions = {
+export type RouterOptions = {
 	index?: string | undefined;
+	dom?: string | undefined;
 };
 
 export class Router {
-	root = createRoot(document.getElementById('_app'));
+	root: null | Root = null;
 	currentPage: () => JSX.Element;
 
 	constructor(options: RouterOptions = {}) {
+		if (options.dom) this.root = createRoot(document.getElementById(options.dom));
+		else this.root = createRoot(document.getElementById('_app'));
+
 		if (!options.index)
 			ElectronAPI()
 				.getLastNavigation()

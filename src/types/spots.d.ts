@@ -3,6 +3,8 @@ export type Spot = {
 	throwType: string;
 	grenadeType: GrenadeTypes;
 
+	map: string;
+
 	x: number;
 	y: number;
 	z: number;

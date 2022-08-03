@@ -11,7 +11,7 @@ const APPDATA_PATH = path.join(
 
 const SPOTS_REVIEWER_PATH = path.join(APPDATA_PATH, 'kibbewater/Grenade Helper/');
 
-export function parseSpots(spots: string): Spot[] {
+export function parseSpots(spots: string, map: string): Spot[] {
 	// Remove <br> tags and replace with newlines
 	const spotsWithoutBreaks = spots.replace(/<br>/g, '\n');
 
@@ -26,6 +26,8 @@ export function parseSpots(spots: string): Spot[] {
 			name,
 			throwType,
 			grenadeType: grenadeType.toLocaleLowerCase(),
+
+			map: map,
 
 			x: parseFloat(x),
 			y: parseFloat(y),
@@ -52,25 +54,43 @@ export function getSpots(map: string): Promise<Spot[]> {
 			return reject('Invalid map');
 
 		const spots = fs.readFileSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'));
-		resolve(parseSpots(spots.toString()));
+		resolve(parseSpots(spots.toString(), map));
 	});
 }
 
-export function addSpot(map: string, spot: Spot) {
-	// If map does not exist, create it
-	if (!fs.existsSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt')))
-		fs.writeFileSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'), '');
+export function addSpot(map: string, spot: Spot): Promise<Spot[]> {
+	return new Promise((resolve, reject) => {
+		// If map does not exist, create it
+		if (!fs.existsSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt')))
+			fs.writeFileSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'), '');
 
-	// if the file empty
-	const isEmpty =
-		fs.readFileSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt')).toString().length ===
-		0;
+		getSpots(map)
+			.then((spots) => {
+				const newSpots = [...spots, spot];
+				fs.writeFileSync(
+					path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'),
+					newSpots.join('\n')
+				);
+				resolve(newSpots);
+			})
+			.catch(reject);
+	});
+}
 
-	// Append spot to map
-	fs.appendFileSync(
-		path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'),
-		`${isEmpty ? '' : '\n'}${spot.name}*${spot.throwType}*${spot.grenadeType}*${spot.x}*${
-			spot.y
-		}*${spot.z}*${spot.pitch}*${spot.yaw}`
-	);
+export function removeSpot(map: string, spot: Spot): Promise<Spot[]> {
+	return new Promise((resolve, reject) => {
+		getSpots(map)
+			.then((spots) => {
+				const newSpots = spots.filter(
+					(s) =>
+						s.x !== spot.x && s.y !== spot.y && s.z !== spot.z && s.name !== spot.name
+				);
+				fs.writeFileSync(
+					path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'),
+					newSpots.join('\n')
+				);
+				resolve(newSpots);
+			})
+			.catch(reject);
+	});
 }

@@ -27,5 +27,7 @@
  */
 
 import Router from './private/router';
+import ModalRouter from './private/modal';
 
 Router();
+ModalRouter();

@@ -28,27 +28,39 @@ export default function Page() {
 
 	if (!user.id) return <div className='parent dashboard__parent' />;
 
+	const spot = {
+		name: 'Cat 2 Chair',
+		throwType: 'Test',
+		grenadeType: 'molotov',
+		map: 'de_mirage',
+		x: 0,
+		y: 0,
+		z: 0,
+		pitch: 0,
+		yaw: 0,
+	} as Spot;
+
 	return (
 		<div className='parent dashboard__parent'>
 			<h1 className='dashboard__header'>Welcome back, {user.username}</h1>
 			<div className='container'>
 				<div className='container__button_drawer'>
-					<button className='container__button btn__normal'>Remove All</button>
+					<button className='container__button'>Remove All</button>
 					<button className='container__button btn__error'>Remove All</button>
 				</div>
 
 				<div className='container__cards'>
 					<div className='cards__sandbox'>
-						<Card />
-						<Card />
-						<Card />
-						<Card />
-						<Card />
-						<Card />
-						<Card />
-						<Card />
-						<Card />
-						<Card />
+						<Card spot={spot} />
+						<Card spot={spot} />
+						<Card spot={spot} />
+						<Card spot={spot} />
+						<Card spot={spot} />
+						<Card spot={spot} />
+						<Card spot={spot} />
+						<Card spot={spot} />
+						<Card spot={spot} />
+						<Card spot={spot} />
 					</div>
 				</div>
 			</div>
