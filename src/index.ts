@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import path from 'path';
 
-import Setup from './ipc';
+import Setup, { FailedToLoad, LoadMap } from './ipc';
 import './api/spots';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -25,7 +25,23 @@ else {
 		if (!mainWindow) return;
 
 		const url = argv.find((arg) => arg.startsWith(PROTOCOL + '://'));
-		if (url) ipcMain.emit('opened_url', url);
+		if (url) {
+			const [, newUrl] = url.split(PROTOCOL + '://');
+			const [executionType, ...args] = newUrl.split('/');
+
+			switch (executionType) {
+				case 'loadmap':
+					if (args.length === 1) {
+						FailedToLoad(mainWindow, 'Missing map name');
+						break;
+					}
+					LoadMap(args[0]);
+					break;
+				default:
+					FailedToLoad(mainWindow, 'Unknown execution type');
+					break;
+			}
+		}
 
 		if (mainWindow.isMinimized()) mainWindow.restore();
 		mainWindow.focus();

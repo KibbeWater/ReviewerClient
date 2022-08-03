@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
-import { ipcMain } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 
 import type { UserResponse } from './types/user';
-import removeAllSpots, { addSpot, getAllSpots, getSpots, removeSpot } from './api/spots';
+import removeAllSpots, { addSpot, addSpots, getAllSpots, getSpots, removeSpot } from './api/spots';
+import type { Spot } from './types/spots';
 
 const API_URL = 'https://grenade.kibbewater.com/api';
 
@@ -51,6 +52,35 @@ function FetchUser(renew?: string): Promise<UserResponse> {
 	});
 }
 
+export function LoadMap(id: string) {
+	return new Promise((resolve, reject) => {
+		fetch(API_URL + '/submissions', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				id: id,
+			}),
+		})
+			.then((response) =>
+				response
+					.json()
+					.then((data: Spot & { id: number }) => {
+						data.name = `${data.id} - ${data.name}`;
+						delete data.id;
+
+						resolve(data);
+
+						addSpot(data.map, data);
+						ipcMain.emit('map_loaded', data);
+					})
+					.catch(reject)
+			)
+			.catch((error) => reject(error));
+	});
+}
+
 let navURL = 'index';
 
 export default function Setup() {
@@ -87,4 +117,8 @@ export default function Setup() {
 	ipcMain.on('remove_all_spots', (event, map) =>
 		event.reply('remove_all_spots', removeAllSpots(map))
 	);
+}
+
+export function FailedToLoad(window: BrowserWindow, error?: string) {
+	window.webContents.send('failed_to_load', error || 'Unknown error');
 }

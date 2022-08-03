@@ -28,6 +28,12 @@
 
 import Router from './private/router';
 import ModalRouter from './private/modal';
+import ElectronAPI from './lib/electron';
 
 Router();
 ModalRouter();
+
+ElectronAPI().onFailedToLoad((error) => {
+	console.error(error);
+	ModalRouter().Show('failedToLoad');
+});

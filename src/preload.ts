@@ -66,6 +66,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
 	removeAllSpots: (map: string) => ipcRenderer.send('remove_all_spots', map),
 
-	onURLOpened: (callback: (url: string) => void) =>
-		ipcRenderer.on('url_opened', (event, url) => callback(url)),
+	onMapLoaded: (callback: (spot: Spot) => void) =>
+		ipcRenderer.on('map_loaded', (event, spot) => callback(spot)),
+
+	onFailedToLoad: (callback: (error: string) => void) =>
+		ipcRenderer.on('failed_to_load', (event, error) => callback(error)),
 });

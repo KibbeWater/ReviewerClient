@@ -14,4 +14,7 @@ export type electronAPI = {
 	addSpot: (map: string, spot: Spot) => Promise<Spot[]>;
 	removeSpot: (map: string, spot: Spot) => Promise<Spot[]>;
 	removeAllSpots: (map: string) => void;
+
+	onMapLoaded: (callback: (spot: Spot) => void) => void;
+	onFailedToLoad: (callback: (error: string) => void) => void;
 };

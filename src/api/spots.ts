@@ -39,6 +39,14 @@ export function parseSpots(spots: string, map: string): Spot[] {
 	});
 }
 
+export function serializeSpots(spots: Spot[]): string {
+	return spots
+		.map((spot) => {
+			return `${spot.name}*${spot.throwType}*${spot.grenadeType}*${spot.x}*${spot.y}*${spot.z}*${spot.pitch}*${spot.yaw}`;
+		})
+		.join('\n');
+}
+
 export function getAllSpots(): string[] {
 	const files = fs.readdirSync(SPOTS_REVIEWER_PATH);
 	const spotFiles = files.reduce((prev, cur) => {
@@ -69,7 +77,26 @@ export function addSpot(map: string, spot: Spot): Promise<Spot[]> {
 				const newSpots = [...spots, spot];
 				fs.writeFileSync(
 					path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'),
-					newSpots.join('\n')
+					serializeSpots(newSpots)
+				);
+				resolve(newSpots);
+			})
+			.catch(reject);
+	});
+}
+
+export function addSpots(map: string, spots: Spot[]): Promise<Spot[]> {
+	return new Promise((resolve, reject) => {
+		// If map does not exist, create it
+		if (!fs.existsSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt')))
+			fs.writeFileSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'), '');
+
+		getSpots(map)
+			.then((curSpots) => {
+				const newSpots = [...curSpots, ...spots];
+				fs.writeFileSync(
+					path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'),
+					serializeSpots(newSpots)
 				);
 				resolve(newSpots);
 			})
