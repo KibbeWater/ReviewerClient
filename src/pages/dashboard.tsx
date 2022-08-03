@@ -6,6 +6,7 @@ import type { Spot } from '../types/spots';
 import type { User } from '../types/user';
 import ElectronAPI from '../lib/electron';
 import '../styles/dashboard.css';
+import Card from '../components/card';
 
 export default function Page() {
 	const [user, setUser] = useState({} as User);
@@ -38,19 +39,16 @@ export default function Page() {
 
 				<div className='container__cards'>
 					<div className='cards__sandbox'>
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
-						<div className='card' />
+						<Card />
+						<Card />
+						<Card />
+						<Card />
+						<Card />
+						<Card />
+						<Card />
+						<Card />
+						<Card />
+						<Card />
 					</div>
 				</div>
 			</div>

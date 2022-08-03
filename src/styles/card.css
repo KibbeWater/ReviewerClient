@@ -1,0 +1,11 @@
+.card {
+	width: 90%;
+	height: 75px;
+	background-color: blue;
+
+	flex-shrink: 0;
+
+	margin-bottom: 15px;
+
+	position: relative;
+}
