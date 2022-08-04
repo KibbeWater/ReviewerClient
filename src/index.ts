@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import Update from 'update-electron-app';
 import path from 'path';
 
 import Setup, { FailedToLoad, LoadMap } from './ipc';
@@ -10,6 +11,7 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 const PROTOCOL = 'grenaderc';
 let mainWindow: BrowserWindow | null = null;
 
+Update();
 if (require('electron-squirrel-startup')) app.quit();
 
 if (process.defaultApp) {
