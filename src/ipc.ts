@@ -1,11 +1,20 @@
 import fetch from 'node-fetch';
 import { BrowserWindow, ipcMain } from 'electron';
+import { Cookie } from 'tough-cookie';
 
-import type { UserResponse } from './types/user';
-import removeAllSpots, { addSpot, addSpots, getAllSpots, getSpots, removeSpot } from './api/spots';
+import type { User, UserResponse } from './types/user';
+import removeAllSpots, {
+	addSpot,
+	addSpots,
+	getAllSpots,
+	getSpots,
+	parseObjectSpot,
+	removeSpot,
+} from './api/spots';
 import type { Spot } from './types/spots';
 
 const API_URL = 'https://grenade.kibbewater.com/api';
+let lastToken = '';
 
 function Login(username: string, password: string): Promise<UserResponse> {
 	return new Promise((resolve, reject) => {
@@ -22,7 +31,23 @@ function Login(username: string, password: string): Promise<UserResponse> {
 			.then((response) =>
 				response
 					.json()
-					.then((data) => resolve(data as UserResponse))
+					.then((data) => {
+						if (response.headers.has('Set-Cookie')) {
+							// Loop through all cookies
+							const cookies = response.headers
+								.get('Set-Cookie')!
+								.split(';')
+								.map((cookie) => {
+									return Cookie.parse(cookie);
+								});
+
+							// Find the token cookie
+							const tokenCookie = cookies.find((cookie) => cookie.key === 'token');
+
+							if (tokenCookie) lastToken = tokenCookie.value;
+						}
+						resolve(data as UserResponse);
+					})
 					.catch(() => console.error(response))
 			)
 			.catch((error) => reject(error));
@@ -45,14 +70,54 @@ function FetchUser(renew?: string): Promise<UserResponse> {
 			.then((response) =>
 				response
 					.json()
-					.then((data) => resolve(data as UserResponse))
+					.then((data) => {
+						if (response.headers.has('Set-Cookie')) {
+							// Loop through all cookies
+							const cookies = response.headers
+								.get('Set-Cookie')!
+								.split(';')
+								.map((cookie) => {
+									return Cookie.parse(cookie);
+								});
+
+							// Find the token cookie
+							const tokenCookie = cookies.find((cookie) => cookie.key === 'token');
+
+							if (tokenCookie) lastToken = tokenCookie.value;
+						}
+						resolve(data as UserResponse);
+					})
 					.catch(reject)
 			)
 			.catch((error) => reject(error));
 	});
 }
 
-export function LoadMap(id: string) {
+function RateSubmission(id: number, rating: boolean, isMod: boolean) {
+	return new Promise((resolve, reject) => {
+		fetch(API_URL + '/rate/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				cookie: 'token=' + lastToken + ';',
+			},
+			body: JSON.stringify({
+				suggestion: id,
+				rating,
+				isModReview: isMod,
+			}),
+		})
+			.then((response) =>
+				response
+					.json()
+					.then((data) => resolve(data))
+					.catch(() => reject('Unable to add review'))
+			)
+			.catch(() => reject('Unable to add review'));
+	});
+}
+
+export function LoadMap(window: BrowserWindow, id: string) {
 	return new Promise((resolve, reject) => {
 		fetch(API_URL + '/submissions', {
 			method: 'POST',
@@ -66,14 +131,18 @@ export function LoadMap(id: string) {
 			.then((response) =>
 				response
 					.json()
-					.then((data: Spot & { id: number }) => {
-						data.name = `${data.id} - ${data.name}`;
+					.then((result: { result: Array<Spot & { id: number; location: string }> }) => {
+						const data = result.result[0] as Spot & { id: number; location: string };
+						if (!data) return reject('No map found');
+
+						data.name = `${data.id} - ${data.location}`;
 						delete data.id;
+						delete data.location;
 
-						resolve(data);
-
-						addSpot(data.map, data);
-						ipcMain.emit('map_loaded', data);
+						addSpot(data.map, data).then(() => {
+							window.webContents.send('map_loaded', data);
+							resolve(data);
+						});
 					})
 					.catch(reject)
 			)
@@ -115,7 +184,13 @@ export default function Setup() {
 	);
 
 	ipcMain.on('remove_all_spots', (event, map) =>
-		event.reply('remove_all_spots', removeAllSpots(map))
+		event.reply('remove_all_spots_' + map, removeAllSpots(map))
+	);
+
+	ipcMain.on('rate_spot', (event, id, rating, isMod) =>
+		RateSubmission(id, rating, isMod)
+			.then((res: { success: boolean }) => event.reply('rate_spot_' + id, res.success))
+			.catch(() => event.reply('rate_spot_' + id, false))
 	);
 }
 

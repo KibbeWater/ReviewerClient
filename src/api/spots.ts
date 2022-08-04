@@ -11,6 +11,23 @@ const APPDATA_PATH = path.join(
 
 const SPOTS_REVIEWER_PATH = path.join(APPDATA_PATH, 'kibbewater/Grenade Helper/');
 
+export function parseObjectSpot(spot: any): Spot & { id: string } {
+	return {
+		id: spot.ID,
+		map: spot.Map,
+		name: spot.Location,
+
+		throwType: spot['Throw Type'],
+		grenadeType: spot['Grenade Type'],
+
+		x: spot.X,
+		y: spot.Y,
+		z: spot.Z,
+		pitch: spot.Pitch,
+		yaw: spot.Yaw,
+	} as Spot & { id: string };
+}
+
 export function parseSpots(spots: string, map: string): Spot[] {
 	// Remove <br> tags and replace with newlines
 	const spotsWithoutBreaks = spots.replace(/<br>/g, '\n');
@@ -18,32 +35,39 @@ export function parseSpots(spots: string, map: string): Spot[] {
 	// Split into lines
 	const lines = spotsWithoutBreaks.split('\n');
 
-	return lines.map((line) => {
+	if (lines.length === 0) return [];
+
+	const spots2 = lines.map((line) => {
 		// Parse each line by * space-separated values
 		const [name, throwType, grenadeType, x, y, z, pitch, yaw] = line.split('*');
 
-		return {
-			name,
-			throwType,
-			grenadeType: grenadeType.toLocaleLowerCase(),
+		if (grenadeType !== undefined)
+			return {
+				name,
+				throwType,
+				grenadeType: grenadeType.toLowerCase(),
 
-			map: map,
+				map: map,
 
-			x: parseFloat(x),
-			y: parseFloat(y),
-			z: parseFloat(z),
+				x: parseFloat(x),
+				y: parseFloat(y),
+				z: parseFloat(z),
 
-			pitch: parseFloat(pitch),
-			yaw: parseFloat(yaw),
-		} as Spot;
+				pitch: parseFloat(pitch),
+				yaw: parseFloat(yaw),
+			} as Spot;
 	});
+
+	return spots2;
 }
 
 export function serializeSpots(spots: Spot[]): string {
 	return spots
 		.map((spot) => {
-			return `${spot.name}*${spot.throwType}*${spot.grenadeType}*${spot.x}*${spot.y}*${spot.z}*${spot.pitch}*${spot.yaw}`;
+			if (spot !== undefined)
+				return `${spot.name}*${spot.throwType}*${spot.grenadeType}*${spot.x}*${spot.y}*${spot.z}*${spot.pitch}*${spot.yaw}`;
 		})
+		.filter((line) => line !== undefined)
 		.join('\n');
 }
 
@@ -59,7 +83,7 @@ export function getAllSpots(): string[] {
 export function getSpots(map: string): Promise<Spot[]> {
 	return new Promise((resolve, reject) => {
 		if (!fs.existsSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt')))
-			return reject('Invalid map');
+			fs.writeFileSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'), '');
 
 		const spots = fs.readFileSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'));
 		resolve(parseSpots(spots.toString(), map));
@@ -114,7 +138,7 @@ export function removeSpot(map: string, spot: Spot): Promise<Spot[]> {
 				);
 				fs.writeFileSync(
 					path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'),
-					newSpots.join('\n')
+					serializeSpots(newSpots)
 				);
 				resolve(newSpots);
 			})

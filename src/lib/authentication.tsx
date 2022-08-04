@@ -29,6 +29,7 @@ export function GetUser(): Promise<User> {
 					if (data.renew) localStorage.setItem('renew', data.renew);
 					resolve(data.user as User);
 				} else reject(data.error);
-			});
+			})
+			.catch(reject);
 	});
 }

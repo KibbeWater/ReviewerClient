@@ -31,13 +31,18 @@ else {
 
 			switch (executionType) {
 				case 'loadmap':
-					if (args.length === 1) {
+					if (args.length !== 1) {
 						FailedToLoad(mainWindow, 'Missing map name');
 						break;
 					}
-					LoadMap(args[0]);
+					LoadMap(mainWindow, args[0])
+						.then(() => {
+							console.log('Loaded map');
+						})
+						.catch((error) => FailedToLoad(mainWindow, error));
 					break;
 				default:
+					dialog.showErrorBox('URL', 'default');
 					FailedToLoad(mainWindow, 'Unknown execution type');
 					break;
 			}

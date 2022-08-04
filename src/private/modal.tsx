@@ -12,7 +12,6 @@ export class ModalRouter {
 	Show(modal: string): Promise<void> {
 		return new Promise<void>((resolve) => {
 			import(`../modals/${modal}`).then((module) => {
-				console.log('module', module);
 				this.currentPage = module.default;
 				this.render();
 				resolve();

@@ -64,11 +64,30 @@ contextBridge.exposeInMainWorld('electronAPI', {
 		});
 	},
 
-	removeAllSpots: (map: string) => ipcRenderer.send('remove_all_spots', map),
+	removeAllSpots: (map: string): Promise<void> => {
+		return new Promise((resolve, reject) => {
+			ipcRenderer.send('remove_all_spots', map);
+			ipcRenderer.once('remove_all_spots_' + map, (event, spots: Spot[]) => resolve());
+		});
+	},
 
 	onMapLoaded: (callback: (spot: Spot) => void) =>
 		ipcRenderer.on('map_loaded', (event, spot) => callback(spot)),
 
 	onFailedToLoad: (callback: (error: string) => void) =>
 		ipcRenderer.on('failed_to_load', (event, error) => callback(error)),
+
+	onError: (callback: (error: string) => void) =>
+		ipcRenderer.on('error', (event, error) => callback(error)),
+
+	rateSpot: (id: number, rating: boolean, isMod: boolean): Promise<void> => {
+		return new Promise((resolve, reject) => {
+			ipcRenderer.send('rate_spot', id, rating, isMod);
+			ipcRenderer.once('rate_spot_' + id, (event, success) => {
+				console.log(success);
+				if (success) resolve();
+				else reject();
+			});
+		});
+	},
 });
