@@ -5,7 +5,7 @@
   "description": "The official client used for the GrenadeHelper Review Program",
   "main": ".webpack/main",
   "icon": "src/public/icons/win-icon.png",
-  "repository": "https://github.com/KibbeWater/ReviewerClient",
+  "repository": "KibbeWater/ReviewerClient",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
