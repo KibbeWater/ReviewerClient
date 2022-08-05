@@ -31,20 +31,29 @@ else {
 			const [, newUrl] = url.split(PROTOCOL + '://');
 			const [executionType, ...args] = newUrl.split('/');
 
+			console.log('Maps: ' + args.join(', '));
+
 			switch (executionType) {
 				case 'loadmap':
 					if (args.length !== 1) {
 						FailedToLoad(mainWindow, 'Missing map name');
 						break;
 					}
-					LoadMap(mainWindow, args[0])
-						.then(() => {
-							console.log('Loaded map');
-						})
-						.catch((error) => FailedToLoad(mainWindow, error));
+					LoadMap(mainWindow, args[0]).catch((error) => FailedToLoad(mainWindow, error));
+					break;
+				case 'loadmaps':
+					if (args.length < 1) {
+						FailedToLoad(mainWindow, 'Missing map name');
+						break;
+					}
+					args.forEach((map) => {
+						LoadMap(mainWindow, map).catch((error) => {
+							console.error(error);
+							FailedToLoad(mainWindow, error);
+						});
+					});
 					break;
 				default:
-					dialog.showErrorBox('URL', 'default');
 					FailedToLoad(mainWindow, 'Unknown execution type');
 					break;
 			}
@@ -61,7 +70,6 @@ else {
 }
 
 function createWindow() {
-	console.log(path.join(__dirname, 'src/public/icons/win-icon.png'));
 	mainWindow = new BrowserWindow({
 		height: 800,
 		width: 1200,

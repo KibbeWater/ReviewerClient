@@ -132,10 +132,11 @@ export function removeSpot(map: string, spot: Spot): Promise<Spot[]> {
 	return new Promise((resolve, reject) => {
 		getSpots(map)
 			.then((spots) => {
-				const newSpots = spots.filter(
-					(s) =>
-						s.x !== spot.x && s.y !== spot.y && s.z !== spot.z && s.name !== spot.name
-				);
+				const newSpots = spots.filter((s) => s.name !== spot.name);
+				if (newSpots.length === 0) {
+					fs.rmSync(path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'));
+					return resolve(newSpots);
+				}
 				fs.writeFileSync(
 					path.join(SPOTS_REVIEWER_PATH, map + '_review.txt'),
 					serializeSpots(newSpots)
