@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "The official client used for the GrenadeHelper Review Program",
   "main": ".webpack/main",
+  "icon": "src/public/icons/win-icon.png",
   "repository": "https://github.com/KibbeWater/ReviewerClient",
   "scripts": {
     "start": "electron-forge start",
@@ -20,7 +21,11 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "./src/public/icons/win-icon.ico",
+        "arch": "all",
+        "platform": "win32"
+      },
       "publishers": [
         {
           "name": "@electron-forge/publisher-github",

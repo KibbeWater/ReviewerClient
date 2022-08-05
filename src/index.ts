@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, nativeImage, Tray } from 'electron';
 import Update from 'update-electron-app';
 import path from 'path';
 
@@ -54,12 +54,14 @@ else {
 		mainWindow.focus();
 	});
 
+	let tray;
 	app.whenReady().then(() => {
 		createWindow();
 	});
 }
 
 function createWindow() {
+	console.log(path.join(__dirname, 'src/public/icons/win-icon.png'));
 	mainWindow = new BrowserWindow({
 		height: 800,
 		width: 1200,
@@ -68,6 +70,7 @@ function createWindow() {
 			preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
 			nodeIntegration: true,
 		},
+		icon: path.join(__dirname, 'src/public/icons/win-icon.png'),
 	});
 
 	ipcMain.on('quit', () => {
