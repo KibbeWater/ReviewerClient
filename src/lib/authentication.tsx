@@ -1,10 +1,10 @@
 import ElectronAPI from './electron';
 import type { UserResponse, User } from '../types/user';
 
-export function Authenticate(username: string, password: string, token: string): Promise<User> {
+export function Authenticate(username: string, password: string): Promise<User> {
 	return new Promise((resolve, reject) => {
 		ElectronAPI()
-			.login(username, password, token)
+			.login(username, password)
 			.then((response: UserResponse) => {
 				if (response.success) {
 					if (response.renew) localStorage.setItem('renew', response.renew);

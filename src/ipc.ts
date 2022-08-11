@@ -2,31 +2,24 @@ import fetch from 'node-fetch';
 import { BrowserWindow, ipcMain } from 'electron';
 import { Cookie } from 'tough-cookie';
 
-import type { User, UserResponse } from './types/user';
-import removeAllSpots, {
-	addSpot,
-	addSpots,
-	getAllSpots,
-	getSpots,
-	parseObjectSpot,
-	removeSpot,
-} from './api/spots';
+import type { UserResponse } from './types/user';
+import removeAllSpots, { addSpot, getAllSpots, getSpots, removeSpot } from './api/spots';
 import type { Spot } from './types/spots';
 
 const API_URL = 'https://grenade.kibbewater.com/api';
 let lastToken = '';
 
-function Login(username: string, password: string, token: string): Promise<UserResponse> {
+function Login(username: string, password: string): Promise<UserResponse> {
 	return new Promise((resolve, reject) => {
 		fetch(API_URL + '/user', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
+				'User-Agent': 'GrenadeRC',
 			},
 			body: JSON.stringify({
 				username: username,
 				password: password,
-				captcha: token,
 			}),
 		})
 			.then((response) =>
@@ -154,8 +147,8 @@ export function LoadMap(window: BrowserWindow, id: string) {
 let navURL = 'index';
 
 export default function Setup() {
-	ipcMain.on('authenticate', (event, username, password, token) =>
-		Login(username, password, token).then((response: UserResponse) =>
+	ipcMain.on('authenticate', (event, username, password) =>
+		Login(username, password).then((response: UserResponse) =>
 			event.reply('authenticate_response', response, response.error)
 		)
 	);

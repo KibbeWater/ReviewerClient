@@ -3,7 +3,7 @@ export type electronAPI = {
 	maximiseWindow: () => void;
 	minimiseWindow: () => void;
 
-	login: (username: string, password: string, token: string) => Promise<UserResponse>;
+	login: (username: string, password: string) => Promise<UserResponse>;
 	fetchUser: (token: string | undefined) => Promise<UserResponse>;
 
 	navigate: (url: string) => void;

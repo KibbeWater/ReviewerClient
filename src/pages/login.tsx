@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useRouter } from '../private/router';
 import { Authenticate, GetUser } from '../lib/authentication';
-import { GoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 import '../styles/login.css';
 
@@ -14,13 +13,11 @@ export default function Page() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 
-	const [token, setToken] = useState('');
-
 	const router = useRouter();
 
 	const loginBtn = () => {
 		setLoading(true);
-		Authenticate(username, password, token)
+		Authenticate(username, password)
 			.then(() => router.Navigate('dashboard'))
 			.catch((e) => {
 				setError(e);
@@ -30,10 +27,10 @@ export default function Page() {
 	};
 
 	useEffect(() => {
-		if (error || loading || !token) setBtnDisabled(true);
+		if (error || loading) setBtnDisabled(true);
 		else if (!username || !password) setBtnDisabled(true);
 		else setBtnDisabled(false);
-	}, [error, username, password, loading, token]);
+	}, [error, username, password, loading]);
 
 	useEffect(() => {
 		if (error) {
@@ -71,7 +68,6 @@ export default function Page() {
 							value={password}
 						/>
 					</div>
-					<GoogleReCaptcha onVerify={setToken} />
 					<motion.button
 						className='login__grid__button'
 						style={{ backgroundColor: '#0369A1' }}
