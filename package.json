@@ -1,7 +1,7 @@
 {
   "name": "reviewclient",
   "productName": "ReviewClient",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The official client used for the GrenadeHelper Review Program",
   "main": ".webpack/main",
   "icon": "src/public/icons/win-icon.png",
