@@ -1,7 +1,7 @@
 {
   "name": "reviewclient",
   "productName": "ReviewClient",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The official client used for the GrenadeHelper Review Program",
   "main": ".webpack/main",
   "icon": "src/public/icons/win-icon.png",
@@ -116,6 +116,7 @@
     "node-fetch": "^3.2.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-google-recaptcha-v3": "^1.10.0",
     "tough-cookie": "^4.0.0",
     "update-electron-app": "^2.0.1"
   }

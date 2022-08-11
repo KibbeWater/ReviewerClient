@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, nativeImage, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, session } from 'electron';
 import Update from 'update-electron-app';
 import path from 'path';
 
@@ -91,6 +91,17 @@ function createWindow() {
 
 	ipcMain.on('minimise', () => {
 		mainWindow.minimize();
+	});
+
+	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+		callback({
+			responseHeaders: {
+				...details.responseHeaders,
+				'Content-Security-Policy':
+					`script-src 'self' 'unsafe-eval' 'unsafe-inline' https://apis.google.com https://www.google.com https://www.gstatic.com; frame-src https://apis.google.com https://www.google.com https://www.gstatic.com; ` +
+					details.responseHeaders['Content-Security-Policy'],
+			},
+		});
 	});
 
 	Setup();

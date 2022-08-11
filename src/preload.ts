@@ -6,9 +6,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	maximiseWindow: () => ipcRenderer.send('maximise'),
 	minimiseWindow: () => ipcRenderer.send('minimise'),
 
-	login: (username: string, password: string) => {
+	login: (username: string, password: string, token: string) => {
 		return new Promise((resolve, reject) => {
-			ipcRenderer.send('authenticate', username, password);
+			ipcRenderer.send('authenticate', username, password, token);
 			ipcRenderer.once('authenticate_response', (event, user, error) => {
 				if (error) reject(error);
 				else resolve(user);
