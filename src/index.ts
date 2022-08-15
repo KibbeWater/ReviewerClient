@@ -19,6 +19,40 @@ if (process.defaultApp) {
 		app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [path.resolve(process.argv[1])]);
 } else app.setAsDefaultProtocolClient(PROTOCOL);
 
+function ExecuteURL(args: string[], mod = false) {
+	const [executionType, ...executionArgs] = args;
+
+	switch (executionType) {
+		case 'mod':
+			ExecuteURL(executionArgs, true);
+			break;
+		case 'loadmap':
+			if (executionArgs.length !== 1) {
+				FailedToLoad(mainWindow, 'Missing map name');
+				break;
+			}
+			LoadMap(mainWindow, executionArgs[0], mod).catch((error) =>
+				FailedToLoad(mainWindow, error)
+			);
+			break;
+		case 'loadmaps':
+			if (executionArgs.length < 1) {
+				FailedToLoad(mainWindow, 'Missing map name');
+				break;
+			}
+			executionArgs.forEach((map) => {
+				LoadMap(mainWindow, map, mod).catch((error) => {
+					console.error(error);
+					FailedToLoad(mainWindow, error);
+				});
+			});
+			break;
+		default:
+			FailedToLoad(mainWindow, 'Unknown execution type');
+			break;
+	}
+}
+
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
 	//const startupURL = process.argv.find((arg) => arg.startsWith(`${PROTOCOL}://`));
@@ -31,32 +65,7 @@ else {
 			const [, newUrl] = url.split(PROTOCOL + '://');
 			const [executionType, ...args] = newUrl.split('/');
 
-			console.log('Maps: ' + args.join(', '));
-
-			switch (executionType) {
-				case 'loadmap':
-					if (args.length !== 1) {
-						FailedToLoad(mainWindow, 'Missing map name');
-						break;
-					}
-					LoadMap(mainWindow, args[0]).catch((error) => FailedToLoad(mainWindow, error));
-					break;
-				case 'loadmaps':
-					if (args.length < 1) {
-						FailedToLoad(mainWindow, 'Missing map name');
-						break;
-					}
-					args.forEach((map) => {
-						LoadMap(mainWindow, map).catch((error) => {
-							console.error(error);
-							FailedToLoad(mainWindow, error);
-						});
-					});
-					break;
-				default:
-					FailedToLoad(mainWindow, 'Unknown execution type');
-					break;
-			}
+			ExecuteURL([executionType, ...args]);
 		}
 
 		if (mainWindow.isMinimized()) mainWindow.restore();

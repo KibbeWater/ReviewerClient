@@ -84,7 +84,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 		return new Promise((resolve, reject) => {
 			ipcRenderer.send('rate_spot', id, rating, isMod);
 			ipcRenderer.once('rate_spot_' + id, (event, success) => {
-				console.log(success);
 				if (success) resolve();
 				else reject();
 			});

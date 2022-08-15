@@ -11,6 +11,8 @@ export type Spot = {
 
 	pitch: number;
 	yaw: number;
+
+	mod?: boolean;
 };
 
 export type GrenadeTypes = 'flashbang' | 'molotov' | 'smoke';

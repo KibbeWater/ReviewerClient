@@ -22,7 +22,6 @@ export class Router {
 			ElectronAPI()
 				.getLastNavigation()
 				.then((url) => {
-					console.log('Navigating to ' + url);
 					this.Navigate(url).then(() => {
 						this.render();
 					});

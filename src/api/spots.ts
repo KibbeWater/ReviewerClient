@@ -25,6 +25,8 @@ export function parseObjectSpot(spot: any): Spot & { id: string } {
 		z: spot.Z,
 		pitch: spot.Pitch,
 		yaw: spot.Yaw,
+
+		mod: spot.mod,
 	} as Spot & { id: string };
 }
 
@@ -39,7 +41,7 @@ export function parseSpots(spots: string, map: string): Spot[] {
 
 	const spots2 = lines.map((line) => {
 		// Parse each line by * space-separated values
-		const [name, throwType, grenadeType, x, y, z, pitch, yaw] = line.split('*');
+		const [name, throwType, grenadeType, x, y, z, pitch, yaw, mod] = line.split('*');
 
 		if (grenadeType !== undefined)
 			return {
@@ -55,17 +57,21 @@ export function parseSpots(spots: string, map: string): Spot[] {
 
 				pitch: parseFloat(pitch),
 				yaw: parseFloat(yaw),
+
+				mod: mod === 'true',
 			} as Spot;
 	});
 
 	return spots2;
 }
 
-export function serializeSpots(spots: Spot[]): string {
+export function serializeSpots(spots: Array<Spot>): string {
 	return spots
 		.map((spot) => {
 			if (spot !== undefined)
-				return `${spot.name}*${spot.throwType}*${spot.grenadeType}*${spot.x}*${spot.y}*${spot.z}*${spot.pitch}*${spot.yaw}`;
+				return `${spot.name}*${spot.throwType}*${spot.grenadeType}*${spot.x}*${spot.y}*${
+					spot.z
+				}*${spot.pitch}*${spot.yaw}*${spot.mod === true ? 'true' : 'false'}`;
 		})
 		.filter((line) => line !== undefined)
 		.join('\n');

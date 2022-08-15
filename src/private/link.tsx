@@ -8,9 +8,7 @@ interface Props {
 
 function HandleClick(page: string) {
 	// Convert the link to a file path, if it is / then it is 'index' otherwise remove the leading '/'
-	console.log('Navigate to ' + page);
 	const path = page === '/' ? 'index' : page.substring(1);
-	console.log('Translated to ' + path);
 
 	// If it is an external link, then open it in a new tab
 	if (page.startsWith('http')) {
@@ -20,9 +18,6 @@ function HandleClick(page: string) {
 
 	useRouter()
 		.Navigate(path)
-		.then(() => {
-			console.log('Navigated to ' + path);
-		})
 		.catch(() => {
 			console.error('Failed to navigate to page: ' + page);
 		});

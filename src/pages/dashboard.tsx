@@ -23,8 +23,6 @@ export default function Page() {
 		reloadMaps();
 
 		ElectronAPI().onMapLoaded((spot) => {
-			console.log('Loaded new spot: ', spot);
-
 			ElectronAPI()
 				.getMaps()
 				.then((e) => {
@@ -71,7 +69,7 @@ export default function Page() {
 				break;
 			case 'approve':
 				ElectronAPI()
-					.rateSpot(~~(Number(spot.name.split(' - ')[0]) || -1), true, false)
+					.rateSpot(~~(Number(spot.name.split(' - ')[0]) || -1), true, spot.mod === true)
 					.then(() => {
 						removeSpot(spot);
 					})
@@ -80,7 +78,7 @@ export default function Page() {
 				break;
 			case 'reject':
 				ElectronAPI()
-					.rateSpot(~~(Number(spot.name.split(' - ')[0]) || -1), false, false)
+					.rateSpot(~~(Number(spot.name.split(' - ')[0]) || -1), false, spot.mod === true)
 					.then(() => {
 						removeSpot(spot);
 					})

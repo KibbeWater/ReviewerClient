@@ -111,7 +111,7 @@ function RateSubmission(id: number, rating: boolean, isMod: boolean) {
 	});
 }
 
-export function LoadMap(window: BrowserWindow, id: string) {
+export function LoadMap(window: BrowserWindow, id: string, isMod?: boolean) {
 	return new Promise((resolve, reject) => {
 		fetch(API_URL + '/submissions', {
 			method: 'POST',
@@ -130,6 +130,7 @@ export function LoadMap(window: BrowserWindow, id: string) {
 						if (!data) return reject('No map found');
 
 						data.name = `${data.id} - ${data.location}`;
+						data.mod = isMod;
 						delete data.id;
 						delete data.location;
 
